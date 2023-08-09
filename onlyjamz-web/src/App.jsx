@@ -1,19 +1,21 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from 'react';
+import './App.css';
+import axios from 'axios';
+
+axios.get('http://localhost:5000/api/getideas')
+  .then(response => {
+    console.log(response.data);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      {/* <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div> */}
       <h1>OnlyJamz</h1>
       <h3><em>The discerning Nerd's GameJam prompt generator</em></h3>
       <form>
