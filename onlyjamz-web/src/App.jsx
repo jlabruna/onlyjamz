@@ -18,7 +18,7 @@ function App() {
     <>
       <h1>OnlyJamz</h1>
       <h3><em>The discerning Nerd's GameJam prompt generator</em></h3>
-      <form>
+      <form class="py-5">
         <label for="genre"> Select a Genre: </label>
         <select name="genre" id="genre">
           <option value="rpg">RPG</option>
@@ -50,9 +50,9 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save - keepin this coz its cool
-        </p>
+        <div class="py-5" id="results">
+          LOADING...
+        </div>
       </div>
     </>
   )
