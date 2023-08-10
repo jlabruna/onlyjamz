@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './App.css';
+import Button from 'react-bootstrap/Button';
+import Card from 'react-bootstrap/Card';
 // import axios from 'axios';
 
 // axios.get('http://localhost:5000/api/getideas')
@@ -109,18 +111,58 @@ function App() {
         </button>
                
       {showCards && ( 
-        <div className="py-5" id="results">
-          <h3>First Idea:</h3>
-          <p>{JSON.stringify(data[0])}</p>
-          <h3>Second Idea:</h3>
-          <p>{JSON.stringify(data[1])}</p>
-          <h3>Third Idea:</h3>
-          <p>{JSON.stringify(data[2])}</p>
-          <h3>Fourth Idea:</h3>
-          <p>{JSON.stringify(data[3])}</p>
-          <h3>Fifth Idea:</h3>
-          <p>{JSON.stringify(data[4])}</p>
-        </div>
+        <Card className="py-5" id="results">
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>First Idea:</Card.Title>
+              <Card.Text>
+              {JSON.stringify(data[0])}
+              </Card.Text>
+              <Card.Link href="#">Card Link</Card.Link>
+              <Card.Link href="#">Another Link</Card.Link>
+            </Card.Body>
+          </Card>
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>Second Idea:</Card.Title>
+              <Card.Text>
+              {JSON.stringify(data[1])}
+              </Card.Text>
+              <Card.Link href="#">Card Link</Card.Link>
+              <Card.Link href="#">Another Link</Card.Link>
+            </Card.Body>
+          </Card>
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>Third Idea:</Card.Title>
+              <Card.Text>
+              {JSON.stringify(data[2])}
+              </Card.Text>
+              <Card.Link href="#">Card Link</Card.Link>
+              <Card.Link href="#">Another Link</Card.Link>
+            </Card.Body>
+          </Card>
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>Forth Idea:</Card.Title>
+              <Card.Text>
+              {JSON.stringify(data[3])}
+              </Card.Text>
+              <Card.Link href="#">Card Link</Card.Link>
+              <Card.Link href="#">Another Link</Card.Link>
+            </Card.Body>
+          </Card>
+          <Card style={{ width: '18rem' }}>
+            <Card.Body>
+              <Card.Title>Fifth Idea:</Card.Title>
+              <Card.Text>
+              {JSON.stringify(data[4])}
+              </Card.Text>
+              <Card.Link href="#">Card Link</Card.Link>
+              <Card.Link href="#">Another Link</Card.Link>
+            </Card.Body>
+          </Card>
+        </Card>
       )}
       </div>
     </>
