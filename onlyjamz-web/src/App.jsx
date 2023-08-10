@@ -15,25 +15,47 @@ import './App.css';
 function App() {
   // const [count, setCount] = useState(0)
   const [data, setData] = useState([]);
+  const [fetching, setFetching] = useState(false);
+  const [showCards, setShowCards] = useState(false);
   const apiUrl = 'http://localhost:5000/test';
 
-  useEffect(()=> {
-    fetchData();
-  }, []);
+  // useEffect(()=> {
+  //   fetchData();
+  // }, []);
 
-  const fetchData = async ()=> {
+  async function fetchData() {
     try {
+      setFetching(true);
       const response = await fetch(apiUrl);
       const jsonData = await response.json();
       console.log(jsonData)
       setData(jsonData);
     } catch (error) {
       console.error('Error fetching data:', error);
+    } finally {
+      // do the return of all the html here.
+      // in a react function, populate a div with data.
+      // learn how to take the results in this function, and stick them in the card divs at the end.
+      setFetching(false);
     }
   };
 
+  // function handleButtonClick() {
+  //   setShowCards(false);
+  //   fetchData().then(() => {
+  //     setShowCards(true);
+  //   });
+  // }
 
-
+  // The below is only here so i can see the clearing and reappearing of the showCards div. otherwise its too fast. will replace with commented out
+  // handleButtonClick() after i get the real API working :P
+  function handleButtonClick() {
+    setShowCards(false);
+    fetchData();
+    setTimeout(() => {
+      setShowCards(true);
+    }, 400);
+  }
 
 
   return (
@@ -68,16 +90,11 @@ function App() {
         </select>
       </form>
       <div className='button'>
-        <button type='button' className='btn btn-success'>
-          Get Ideas!
+        <button type='button' className='btn btn-success' onClick={handleButtonClick} disabled={fetching}>
+        {fetching ? 'Fetching...' : 'Fetch Data'}
         </button>
-
-
-
-      {/* <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button> */}
+               
+      {showCards && ( 
         <div className="py-5" id="results">
           <h3>First Idea:</h3>
           <p>{JSON.stringify(data[0])}</p>
@@ -90,6 +107,7 @@ function App() {
           <h3>Fifth Idea:</h3>
           <p>{JSON.stringify(data[4])}</p>
         </div>
+      )}
       </div>
     </>
   )
