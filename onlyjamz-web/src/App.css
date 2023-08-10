@@ -5,6 +5,23 @@
   text-align: center;
 }
 
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 2px;
+  justify-content: center;
+
+}
+
+.eachCard {
+  display: inline;
+  width: auto;
+  max-width: 33%;
+  min-width: 300px;
+  background-color: maroon;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

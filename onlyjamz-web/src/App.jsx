@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import './App.css';
-import Button from 'react-bootstrap/Button';
-import Card from 'react-bootstrap/Card';
+
 // import axios from 'axios';
 
 // axios.get('http://localhost:5000/api/getideas')
@@ -105,68 +104,40 @@ function App() {
           <option value="pvpve">PvPvE</option>
         </select>
       </form>
-      <div className='button'>
+      <div className='py-1'>
         <button type='button' className='btn btn-success' onClick={handleButtonClick} disabled={fetching}>
-        {fetching ? 'Fetching...' : 'Fetch Data'}
+          {fetching ? 'Fetching...' : 'Fetch Data'}
         </button>
-               
-      {showCards && ( 
-        <Card className="py-5" id="results">
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-              <Card.Title>First Idea:</Card.Title>
-              <Card.Text>
-              {JSON.stringify(data[0])}
-              </Card.Text>
-              <Card.Link href="#">Card Link</Card.Link>
-              <Card.Link href="#">Another Link</Card.Link>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-              <Card.Title>Second Idea:</Card.Title>
-              <Card.Text>
-              {JSON.stringify(data[1])}
-              </Card.Text>
-              <Card.Link href="#">Card Link</Card.Link>
-              <Card.Link href="#">Another Link</Card.Link>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-              <Card.Title>Third Idea:</Card.Title>
-              <Card.Text>
-              {JSON.stringify(data[2])}
-              </Card.Text>
-              <Card.Link href="#">Card Link</Card.Link>
-              <Card.Link href="#">Another Link</Card.Link>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-              <Card.Title>Forth Idea:</Card.Title>
-              <Card.Text>
-              {JSON.stringify(data[3])}
-              </Card.Text>
-              <Card.Link href="#">Card Link</Card.Link>
-              <Card.Link href="#">Another Link</Card.Link>
-            </Card.Body>
-          </Card>
-          <Card style={{ width: '18rem' }}>
-            <Card.Body>
-              <Card.Title>Fifth Idea:</Card.Title>
-              <Card.Text>
-              {JSON.stringify(data[4])}
-              </Card.Text>
-              <Card.Link href="#">Card Link</Card.Link>
-              <Card.Link href="#">Another Link</Card.Link>
-            </Card.Body>
-          </Card>
-        </Card>
-      )}
       </div>
+      {showCards && ( 
+        <div className="my-5 results" id="results">
+          <div className='card eachCard'>
+            <h3 className='card-title'>First Idea:</h3>
+            <p className='card-text'>{JSON.stringify(data[0])}</p>
+          </div>
+          <div className='card eachCard'>
+            <h3 className='card-title'>Second Idea:</h3>
+            <p className='card-text'>{JSON.stringify(data[1])}</p>
+          </div>
+          <div className='card eachCard'>
+            <h3 className='card-title'>Third Idea:</h3>
+            <p className='card-text'>{JSON.stringify(data[2])}</p>
+          </div>
+          <div className='card eachCard'>
+            <h3 className='card-title'>Fourth Idea:</h3>
+            <p className='card-text'>{JSON.stringify(data[3])}</p>
+          </div>
+          <div className='card eachCard'>
+            <h3 className='card-title'>Fifth Idea:</h3>
+            <p className='card-text'>{JSON.stringify(data[4])}</p>
+          </div>
+        </div>
+      )}
+    
     </>
   )
 }
 
 export default App
+
+
