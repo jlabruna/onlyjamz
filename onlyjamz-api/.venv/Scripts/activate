@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="F:\github\onlyjamz\onlyjamz-api\.venv"
+VIRTUAL_ENV="F:\GitHub\onlyjamz\onlyjamz-api\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"
