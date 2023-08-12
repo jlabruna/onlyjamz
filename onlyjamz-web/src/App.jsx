@@ -14,6 +14,8 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
+  // const [savedIdea, setSavedIdea] = useState('')
+  // const [savedIndex, setSavedIndex] = useState('')
 
 //below handleSelectChange is controlling the change in form
 const handleInputChange = (event) => {
@@ -35,6 +37,7 @@ const handleInputChange = (event) => {
   console.log(`UPPER CONSOLE LOG the first option is ${ formGenre } and the second option is ${ formView }`)
 };
 
+// below is submitting the form to chatgpt
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -61,13 +64,41 @@ const handleInputChange = (event) => {
       setResponse(data);
       setImageSrc('/full.png');
       console.log(data);
-      // setFormJam is too late here. the value does not reset to null on the second run, try fixing.
-      // pretty sure theres a checked status you can put on the checkbox and use that in the prompt on row 45
-      // setFormJam('');
     } catch (error) {
       console.error('Error:', error);
     }
   };
+
+  // Below is when you save an idea
+  const handleSave = async (e, idea, index) => {
+    e.preventDefault();
+
+    try {
+      // setSavedIdea(idea);
+      // setSavedIndex(index);
+      console.log(idea)
+      console.log(index)
+
+
+      const apiUrl = 'http://localhost:5000/api/saveIdea';
+      const response = fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          idea
+         }),
+      });
+
+
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+
+
 
  
   return (
@@ -129,37 +160,14 @@ const handleInputChange = (event) => {
             />
         <div className='py-4'><button className='btn btn-success' type="submit">{!response ? buttonText : 'Generate Ideas!'}</button></div>
       </form>
-        {/* {response && (
-          <div className="response results" id="results">
-            <div className='card eachCard'>
-            <h3 className='card-title'>First Idea:</h3>
-            <p className='card-text'>{response[0]}</p>
-            </div>
-            <div className='card eachCard'>
-            <h3 className='card-title'>Second Idea:</h3>
-            <p className='card-text'>{response[1]}</p>
-            </div>
-            <div className='card eachCard'>
-            <h3 className='card-title'>Third Idea:</h3>
-            <p className='card-text'>{response[2]}</p>
-            </div>
-            <div className='card eachCard'>
-            <h3 className='card-title'>Fourth Idea:</h3>
-            <p className='card-text'>{response[3]}</p>
-            </div>
-            <div className='card eachCard'>
-            <h3 className='card-title'>Fifth Idea:</h3>
-            <p className='card-text'>{response[4]}</p>
-            </div>
-          </div>
-        )} */}
+
         {response && (
           <div className="response results" id="results">
             {response.map((idea, index) => (
               <div className='card eachCard'>
                 <h3 className='card-title'>{`Idea ${index + 1}:`}</h3>
                 <p className='card-text'>{idea}</p>
-                <button className='btn btn-info card-button'>click</button>
+                <button className='btn btn-info card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
           </div>
     ))}
   </div>

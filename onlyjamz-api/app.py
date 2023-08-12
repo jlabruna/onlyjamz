@@ -33,17 +33,6 @@ def testData():
     print(testDataFake)
     return jsonify(testDataFake)
 
-# @app.route("/api/chatgpt", methods=("GET", "POST"))
-# def chatgpt():
-#     if request.method == "POST":
-#         submittedRequest = request.get_json()
-#         aiPrompt = submittedRequest['aiPrompt']
-#         response = openai.Completion.create(
-#             model="text-davinci-003",
-#             max_tokens=2048,
-#             prompt=generate_prompt(aiPrompt),
-#             temperature=0.6,
-#         )
 
 @app.route("/api/chatgpt", methods=("GET", "POST"))
 def chatgpt():
@@ -72,6 +61,14 @@ def chatgpt():
         # print(aiResponse)
         # return jsonify(aiResponse)
     return "This is an API you shouldn't see this. go to this URL instead."
+
+
+@app.route("/api/saveIdea", methods=["POST"])
+def saveidea():
+    submittedRequest = request.get_json()
+    print(submittedRequest)
+    return "yo this worked"
+
 
 def generate_prompt(aiPrompt):
     return """Suggest 5 indie game ideas for a game jam, each idea should be 1 paragraph long. The Game should be {}""".format(aiPrompt)
