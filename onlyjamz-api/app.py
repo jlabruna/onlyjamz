@@ -1,9 +1,10 @@
-from flask import Flask, jsonify, redirect, render_template, request, url_for
+from flask import Flask, jsonify, redirect, render_template, request, url_for, session
 from flask_cors import CORS, cross_origin
 import os
 import openai
 import psycopg2
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -21,9 +22,11 @@ except:
 
 
 app = Flask(__name__)
+bcrypt = Bcrypt(app)
 cors = CORS(app)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 app.config['CORS_HEADERS'] = 'Content-Type'
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 
 @app.route('/')
@@ -35,20 +38,6 @@ def helloworld():
 @cross_origin()
 def getIdeas():
     return 'GameJamz ideas'
-
-@app.route('/test')
-@cross_origin()
-def testData():
-    testDataFake = [
-    "1. Elemental Clash: Players control elemental mages in a dynamic arena, using spells to manipulate the environment and battle opponents. Master the art of combining fire, water, earth, and air to create devastating effects and emerge victorious.",
-    "2. Space Salvagers: Set in a post-apocalyptic galaxy, players become salvagers who navigate treacherous asteroid fields to retrieve valuable resources from derelict spaceships. Customize and upgrade your salvaging ship while fending off rival salvagers and space pirates.",
-    "3. Time Quest: A time-traveling RPG where players explore historical periods to solve mysteries and correct anomalies. As a member of the Temporal Agency, you'll collect artifacts, interact with famous figures, and make critical decisions to restore the timeline.",
-    "4. Quantum Conundrum: A puzzle-platformer that leverages quantum physics principles. Players manipulate quantum states to solve intricate puzzles, shifting between parallel dimensions, altering time, and bending reality to overcome mind-bending challenges.",
-    "5. Mythic Odyssey: Embark on a journey through diverse mythologies, from Greek to Norse to Japanese folklore. Players shape-shift into legendary creatures, solve mythology-inspired puzzles, and engage in epic battles against monstrous foes in an expansive open world."
-]
-    # the print will appear in the browser, the return will appear in the route. return = response.
-    print(testDataFake)
-    return jsonify(testDataFake)
 
 
 @app.route("/api/chatgpt", methods=("GET", "POST"))
@@ -146,8 +135,84 @@ def listProjects():
     return "PROJECTS SHOWN"
  
 
+# Login and Logout Routes here
+
+
+@app.route("/api/user")
+def process_user():
+
+    user_status = None
+    form_username = request.args.get("username")
+    print(form_username)
+    form_password = request.args.get("password").encode('utf-8')
+    print(form_password)
+
+    try:
+        conn = psycopg2.connect(
+            host = os.getenv("DB_HOST"),
+            database = "onlyjamz",
+            user = os.getenv("DB_USERNAME"),
+            password = os.getenv("DB_PASSWORD")
+        )
+
+    except:
+        print("USERMSG: could not connect to database")
+        conn = None
+    
+    if conn != None:
+        cur = conn.cursor()
+
+        cur.execute("SELECT * FROM users WHERE username=%s;", [form_username])
+        result = cur.fetchone()
+        
+        # if username exists
+        if result != None:
+            print("RESULT:")
+            print(result)
+            password_hash = result[2] # Get the saved PW from the DB
+            #user exists then check if password matches
+            if bcrypt.check_password_hash(password_hash, form_password):
+                user_status="LOGGED"
+                print("USER MATCHED AND LOGGED IN!")
+                redirect_url = "http://localhost:5173/?status=" + str(user_status) + "&username=" + str(form_username) + "&id=" + str(result[0])
+                return redirect(redirect_url)
+
+
+        
+        #if username doesnt exist
+        else:
+
+            form_password_hash = bcrypt.generate_password_hash(form_password).decode('utf-8')
+            print("FORM PASSWORD HASH:")
+            print(form_password_hash)
+            cur.execute("INSERT INTO users(username, password) VALUES(%s, %s);", [form_username, form_password_hash])
+            print("ADDED USERNAME: " + form_username)
+            cur.execute("SELECT * FROM users WHERE username=%s;", [form_username])
+            result = cur.fetchone()
+            print("CHECKING USERNAME EXISTS:")
+            print(result[1])
+            if result[1]==form_username:    
+                user_status="CREATED"
+                redirect_url = "http://localhost:5173/?status=" + str(user_status) + "&username=" + str(form_username) + "&id=" + str(result[0])
+                return redirect(redirect_url)
+
+
+    conn.commit()
+    conn.close()
+
+    # this is a time thing - this is a security risk but running out of time :)
+    return redirect("http://localhost:5173/")
+
+
+
+
+
+
+# ========================= END ROUTES START FUNCTIONS==============================
+
 def generate_prompt(aiPrompt):
     return """Suggest 5 indie game ideas for a game jam, each idea should be 1 paragraph long. The Game should be {}""".format(aiPrompt)
+
 
 
 

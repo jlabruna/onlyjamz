@@ -1,8 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 import './App.css';
+import Cookies from 'js-cookie'
+
+// if user status is logged in or created set a cookie (with session thingy) and create a react variable (maybe array) that says the user is logged in (global) 
+// and redirect to home page with no variables in string
+// if the cookie is set (ie the variable above is not null), dont show the login form, instead shows a logout button (which goes to flask)
+// if it doesnt exist show the whole login form
+
 
 function App() {
+  const queryParameters = new URLSearchParams(window.location.search)
+  const userStatus = queryParameters.get("status")
+  const userName = queryParameters.get("username")
+  const userId = queryParameters.get("id")
+
   const [getData, setGetData] = useState('');
   const [response, setResponse] = useState('');
   const [imageSrc, setImageSrc] = useState('/empty.png');
@@ -14,8 +26,39 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
+  const [urlId, setUrlId] = useState('');
+  const [urlName, setUrlName] = useState('');
+  // const [cookieSet, setCookieSet] = useState(false);
+
   // const [savedIdea, setSavedIdea] = useState('')
   // const [savedIndex, setSavedIndex] = useState('')
+
+  // if user status is logged in or created as per url 
+  if (userStatus=="CREATED" || userStatus=="LOGGED") {
+    let cookieContents = userName + "=" + userId + "; expires=Thu, 16 Aug 2024 12:00:00 UTC; path=/";
+    document.cookie = cookieContents
+    setUrlId(userId);
+    setUrlName(userName);
+    window.location.replace('http://localhost:5173/');
+  }
+
+  function checkCookie(name) {
+    return document.cookie.includes(name + '=');
+  }
+  
+  if (checkCookie("droptopcaddie")) {
+    console.log('myCookie exists.');
+    // setCookieSet(true);
+  } else {
+    console.log('myCookie does not exist.');
+  }
+
+  checkCookie()
+  // console.log(cookieSet)
+  // check for the cookie - if they are logged in, set a variable.
+  // if the variable is set show logout, dont show the login.
+  // if variable is not set, then show login.
+  // logout is a JS function that will delete all cookies
 
 //below handleSelectChange is controlling the change in form
 const handleInputChange = (event) => {
@@ -98,14 +141,43 @@ const handleInputChange = (event) => {
   };
 
 
+  // Login / Signup submit here 
+  const submitLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      setButtonText('Filling Jar...')
+      setResponse('');
+      setImageSrc('/empty.png');
+      
+      const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
+      await console.log(aiPrompt);
+      const apiUrl = 'http://localhost:5000/api/chatgpt';
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          aiPrompt
+         }),
+      });
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
 
 
  
   return (
     <div className="App">
-      <div>
-        <button className='btn btn-success login-button'>yo</button>
-      </div>
+      <form className='login-button' action={"http://127.0.0.1:5000/api/user"}>
+        {/* if we find a cookie for this website do show a logout button otherwise show a login/signup form  */}
+        <span>Login or Signup: </span>
+        <input type="text" name="username" placeholder="Enter Username"></input>
+        <input type="password" name="password" placeholder='Enter Password'></input>
+        <button className='btn btn-success' type='submit'>Go!</button>
+      </form>
       <img src={imageSrc} height="100px"></img>
       <h1>Only<span className='jam'>Jamz</span></h1>
       <h3><em>The discerning nerd's GameJam prompt generator</em></h3>
