@@ -2,6 +2,23 @@ from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_cors import CORS, cross_origin
 import os
 import openai
+import psycopg2
+from dotenv import load_dotenv
+
+load_dotenv()
+
+try:
+    conn = psycopg2.connect(
+        host = os.getenv("DB_HOST"),
+        database = "onlyjamz",
+        user = os.getenv("DB_USERNAME"),
+        password = os.getenv("DB_PASSWORD")
+    )
+
+except:
+    print("USERMSG: could not connect to database")
+    conn = None
+
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -65,10 +82,72 @@ def chatgpt():
 
 @app.route("/api/saveIdea", methods=["POST"])
 def saveidea():
+    try:
+        conn = psycopg2.connect(
+            host = os.getenv("DB_HOST"),
+            database = "onlyjamz",
+            user = os.getenv("DB_USERNAME"),
+            password = os.getenv("DB_PASSWORD")
+        )
+
+    except:
+        print("USERMSG: could not connect to database")
+        conn = None
+
     submittedRequest = request.get_json()
     print(submittedRequest)
-    return "yo this worked"
+    
+    if conn != None:
+        cur = conn.cursor()
+        cur.execute(
+            "INSERT INTO projects (userid, title, summary, detailed)"
+            "VALUES (%s, %s, %s, %s)",
+            (
+                "1",
+                "PROJECT TITLE",
+                submittedRequest["idea"],
+                "detailed game overview",
+            )
+        )
+    # committing all database changes and closing connections
+    conn.commit()
+    print("CLOSING DATABASE!")
+    conn.close()
+ 
+    return "Idea saved to the database"
 
+@app.route("/api/projects", methods=["GET"])
+def listProjects():
+    try:
+        conn = psycopg2.connect(
+            host = os.getenv("DB_HOST"),
+            database = "onlyjamz",
+            user = os.getenv("DB_USERNAME"),
+            password = os.getenv("DB_PASSWORD")
+        )
+
+    except:
+        print("USERMSG: could not connect to database")
+        conn = None
+
+    if conn != None:
+        cur = conn.cursor()
+        cur.execute("SELECT * FROM projects")
+        all_projects = cur.fetchall()
+        print("RETURNING PROJECTS IN DATABASE...")
+        for project in all_projects:
+            print(project[2])
+
+    # committing all database changes and closing connections
+    conn.commit()
+    print("CLOSING DATABASE!")
+    conn.close()
+ 
+    return "PROJECTS SHOWN"
+ 
 
 def generate_prompt(aiPrompt):
     return """Suggest 5 indie game ideas for a game jam, each idea should be 1 paragraph long. The Game should be {}""".format(aiPrompt)
+
+
+
