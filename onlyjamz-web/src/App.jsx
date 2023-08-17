@@ -201,12 +201,13 @@ const handleInputChange = (event) => {
           <div className={showResults ? "response results" : "hidden"}>
             {response.map((idea, index) => (
               <div className={showResults ? "card eachCard" : "hidden"}>
-                <p className={showResults ? "card-text" : "hidden"}>{idea}</p>
+                <p className={showResults ? "card-text" : "hidden"} >{idea}</p>
                 <button className={showResults ? 'btn btn-info card-button' : "hidden"} onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
+              </div>
+            ))}
           </div>
-    ))}
-  </div>
-)}
+        )}
+      <div>yo</div>
 
 
     </div>

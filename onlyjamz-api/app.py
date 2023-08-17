@@ -192,3 +192,4 @@ def generate_prompt(aiPrompt):
         • Do not put any text after the ideas, just give the ideas themselves.
         Send back the response in JSON format.
         """.format(aiPrompt)
+
