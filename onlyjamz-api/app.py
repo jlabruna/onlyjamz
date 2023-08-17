@@ -45,7 +45,7 @@ def chatgpt():
         aiPrompt = submittedRequest['aiPrompt']
         response = openai.Completion.create(
             engine="text-davinci-003",
-            max_tokens=3800,
+            max_tokens=3600,
             prompt=generate_prompt(aiPrompt),
             temperature=0.6,
             format= 'text'
@@ -84,6 +84,21 @@ def saveidea():
     submittedRequest = request.get_json()
     print(submittedRequest)
     
+    idea_text = submittedRequest['idea']
+    start_index = idea_text.find('<h3>') + 4  # Length of '<h3>' is 4
+    end_index = idea_text.find('</h3>', start_index)
+
+    h3_text = idea_text[start_index:end_index]
+    print(h3_text)
+
+    # Removing <h3> text and any remaining HTML tags
+    rest_of_content = idea_text.replace(h3_text, '')  # Removing the <h3> text
+
+    print(rest_of_content)
+
+
+
+
     if conn != None:
         cur = conn.cursor()
         cur.execute(
@@ -91,9 +106,9 @@ def saveidea():
             "VALUES (%s, %s, %s, %s)",
             (
                 "1",
-                "PROJECT TITLE",
-                submittedRequest["idea"],
-                "detailed game overview",
+                h3_text,
+                rest_of_content,
+                "game notes",
             )
         )
     # committing all database changes and closing connections
@@ -102,6 +117,9 @@ def saveidea():
     conn.close()
  
     return "Idea saved to the database"
+
+
+
 
 @app.route("/api/projects", methods=["GET"])
 def listProjects():
@@ -129,7 +147,31 @@ def listProjects():
     print("CLOSING DATABASE!")
     conn.close()
  
- 
+@app.route("/api/getnotes", methods=["GET"])
+def listNotes():
+    try:
+        conn = psycopg2.connect(
+            host = os.getenv("DB_HOST"),
+            database = "onlyjamz",
+            user = os.getenv("DB_USERNAME"),
+            password = os.getenv("DB_PASSWORD")
+        )
+
+    except:
+        print("USERMSG: could not connect to database")
+        conn = None
+
+    if conn != None:
+        cur = conn.cursor()
+        cur.execute("SELECT notes FROM projects WHERE id=(a variable)")
+        note_projects = cur.fetchall()
+        print("RETURNING PROJECTS IN DATABASE...")
+        return jsonify(note_projects)
+
+    # committing all database changes and closing connections
+    conn.commit()
+    print("CLOSING DATABASE!")
+    conn.close()
 
 
 # ========================= END ROUTES START FUNCTIONS==============================
