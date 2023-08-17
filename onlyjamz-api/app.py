@@ -87,7 +87,7 @@ def saveidea():
     if conn != None:
         cur = conn.cursor()
         cur.execute(
-            "INSERT INTO projects (userid, title, summary, detailed)"
+            "INSERT INTO projects (userid, title, detailed, notes)"
             "VALUES (%s, %s, %s, %s)",
             (
                 "1",
@@ -122,15 +122,13 @@ def listProjects():
         cur.execute("SELECT * FROM projects")
         all_projects = cur.fetchall()
         print("RETURNING PROJECTS IN DATABASE...")
-        for project in all_projects:
-            print(project[2])
+        return jsonify(all_projects)
 
     # committing all database changes and closing connections
     conn.commit()
     print("CLOSING DATABASE!")
     conn.close()
  
-    return "PROJECTS SHOWN"
  
 
 
