@@ -56,7 +56,7 @@ const handleInputChange = (event) => {
       setShowIdeas(true);
       const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
       await console.log(aiPrompt);
-      const apiUrl = 'http://localhost:5000/api/chatgpt';
+      const apiUrl = 'https://onlyjamz.onrender.com/api/chatgpt';
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -87,7 +87,7 @@ const handleInputChange = (event) => {
       console.log(idea)
       console.log(index)
 
-      const apiUrl = 'http://localhost:5000/api/saveIdea';
+      const apiUrl = 'https://onlyjamz.onrender.com/api/saveIdea';
       const response = fetch(apiUrl, {
         method: 'POST',
         headers: {
@@ -106,7 +106,7 @@ const handleInputChange = (event) => {
 
   async function doGetProjects() {
   setProjects('');      
-        const res = await fetch("http://localhost:5000/api/projects");
+        const res = await fetch("https://onlyjamz.onrender.com/api/projects");
         const projectsData = await res.json();
         setProjects(projectsData);
         console.log(projects)
@@ -128,7 +128,7 @@ const handleInputChange = (event) => {
  
   try {
     console.log("DELETING PROJECT" + projectId)
-    const apiUrl = 'http://localhost:5000/api/deleteProject';
+    const apiUrl = 'https://onlyjamz.onrender.com/api/deleteProject';
     const delProj = fetch(apiUrl, {
       method: 'POST',
       headers: {
