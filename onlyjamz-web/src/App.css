@@ -22,6 +22,9 @@
 
 }
 
+.hidden {
+  visibility: hidden;
+}
 
 .jam {
   color: rgb(185, 34, 54);

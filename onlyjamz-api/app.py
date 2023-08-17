@@ -185,9 +185,10 @@ def generate_prompt(aiPrompt):
         • Do not prefix ideas with a number. 
         • Each paragraph should be wrapped in <p> and </p> around the paragraph. 
         • Separate each idea with a line of six equal signs, like this: ======
-        • The addition of the stars row does not count towards the 3 paragraphs. 
+        • The addition of the stars row does not count towards the 3 paragraphs.
         • First paragraph consists of an overview of the general game idea, which should include the following criteria: {}
         • Second paragraph explains the basics of the game mechanics and core gameplay loop, for example how the game is played by the player. 
         Third paragraph delves into more detail around the art style and theme of the game, including any specific character models and how they are represented on screen.
         • Do not put any text after the ideas, just give the ideas themselves.
+        Send back the response in JSON format.
         """.format(aiPrompt)

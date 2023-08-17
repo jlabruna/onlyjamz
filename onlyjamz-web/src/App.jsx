@@ -25,6 +25,7 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
+  const [showResults, setShowResults] = useState(true);
 
  
 
@@ -56,7 +57,7 @@ const handleInputChange = (event) => {
       setButtonText('Filling Jar...')
       setResponse('');
       setImageSrc('/empty.png');
-      
+      setShowResults(true);
       const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
       await console.log(aiPrompt);
       const apiUrl = 'http://localhost:5000/api/chatgpt';
@@ -90,7 +91,7 @@ const handleInputChange = (event) => {
       console.log(idea)
       console.log(index)
 
-
+      setShowResults(false);
       const apiUrl = 'http://localhost:5000/api/saveIdea';
       const response = fetch(apiUrl, {
         method: 'POST',
@@ -183,6 +184,7 @@ const handleInputChange = (event) => {
           <option value="mythological">Mythological</option>
           <option value="Lovecraftian">Lovecraftian</option>
           <option value="modern">Modern</option>
+          <option value="pirate">Pirate</option>
         </select>
         <label for="jam" className='py-3 px-2'> Include Actual Jam??</label>
             <input
@@ -195,11 +197,12 @@ const handleInputChange = (event) => {
       </form>
 
         {response && (
-          <div className="response results" id="results">
+          // <div className="response results" id="results">
+          <div className={showResults ? "response results" : "hidden"}>
             {response.map((idea, index) => (
-              <div className='card eachCard'>
-                <p className='card-text'>{idea}</p>
-                <button className='btn btn-info card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
+              <div className={showResults ? "card eachCard" : "hidden"}>
+                <p className={showResults ? "card-text" : "hidden"}>{idea}</p>
+                <button className={showResults ? 'btn btn-info card-button' : "hidden"} onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
           </div>
     ))}
   </div>
