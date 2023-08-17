@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 import './App.css';
-import Cookies from 'js-cookie'
 
 // if user status is logged in or created set a cookie (with session thingy) and create a react variable (maybe array) that says the user is logged in (global) 
 // and redirect to home page with no variables in string
@@ -26,56 +25,8 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
-  const [urlId, setUrlId] = useState('');
-  const [urlName, setUrlName] = useState('');
-  const [authenticated, setAuthenticated] = useState(false);
 
- // if user status is logged in or created as per url 
-  if (userStatus=="CREATED" || userStatus=="LOGGED") {
-    let cookieName = "userName=" + userName + ";";
-    let cookieId = "userId=" + userId + ";";
-
-
-    document.cookie = cookieName;
-    document.cookie = cookieId;
-    setUrlId(userId);
-    setUrlName(userName);
-    // window.location.replace('http://localhost:5173/');
-  } else {
-    
-    let varId = Cookies.get("userId")
-    let varName = Cookies.get("userName")
-    setUrlId(varId);
-    setUrlName(varName);
-    console.log("User is Revisiting... " + urlId + " " + urlName)
-  }
-
-
-  // const readCookie = (urlName, urlId) => {
-  //   console.log(userName)
-  //   if (authenticated == false && userName== Cookies.get(userName)){
-  //     setAuthenticated(true);
-  //     console.log(urlName + "Logged in")
-  //   } else {
-  //       console.log("not logged in");
-  //   }
-  // }
-  // useEffect(() => {
-  //     readCookie(urlName, urlId)
-  // },[]);
-
-  
-
-
-
-
-  
-  // checkCookie()
-  // console.log(cookieSet)
-  // check for the cookie - if they are logged in, set a variable.
-  // if the variable is set show logout, dont show the login.
-  // if variable is not set, then show login.
-  // logout is a JS function that will delete all cookies
+ 
 
 //below handleSelectChange is controlling the change in form
 const handleInputChange = (event) => {
@@ -188,13 +139,6 @@ const handleInputChange = (event) => {
  
   return (
     <div className="App">
-      <form className='login-button' action={"http://127.0.0.1:5000/api/user"}>
-        {/* if we find a cookie for this website do show a logout button otherwise show a login/signup form  */}
-        <span>Login or Signup: </span>
-        <input type="text" name="username" placeholder="Enter Username"></input>
-        <input type="password" name="password" placeholder='Enter Password'></input>
-        <button className='btn btn-success' type='submit'>Go!</button>
-      </form>
       <img src={imageSrc} height="100px"></img>
       <h1>Only<span className='jam'>Jamz</span></h1>
       <h3><em>The discerning nerd's GameJam prompt generator</em></h3>
@@ -254,7 +198,6 @@ const handleInputChange = (event) => {
           <div className="response results" id="results">
             {response.map((idea, index) => (
               <div className='card eachCard'>
-                <h3 className='card-title'>{`Idea ${index + 1}:`}</h3>
                 <p className='card-text'>{idea}</p>
                 <button className='btn btn-info card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
           </div>

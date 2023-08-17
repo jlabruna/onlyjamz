@@ -4,7 +4,6 @@ import os
 import openai
 import psycopg2
 from dotenv import load_dotenv
-from flask_bcrypt import Bcrypt
 
 load_dotenv()
 
@@ -22,7 +21,6 @@ except:
 
 
 app = Flask(__name__)
-bcrypt = Bcrypt(app)
 cors = CORS(app)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 app.config['CORS_HEADERS'] = 'Content-Type'
@@ -47,13 +45,13 @@ def chatgpt():
         aiPrompt = submittedRequest['aiPrompt']
         response = openai.Completion.create(
             engine="text-davinci-003",
-            max_tokens=2048,
+            max_tokens=3800,
             prompt=generate_prompt(aiPrompt),
             temperature=0.6,
             format= 'text'
         )
 
-        items = response.choices[0].text.strip().split("\n")
+        items = response.choices[0].text.strip().split("======")
 
         items_list = []
         for item in items:
@@ -135,84 +133,21 @@ def listProjects():
     return "PROJECTS SHOWN"
  
 
-# Login and Logout Routes here
-
-
-@app.route("/api/user")
-def process_user():
-
-    user_status = None
-    form_username = request.args.get("username")
-    print(form_username)
-    form_password = request.args.get("password").encode('utf-8')
-    print(form_password)
-
-    try:
-        conn = psycopg2.connect(
-            host = os.getenv("DB_HOST"),
-            database = "onlyjamz",
-            user = os.getenv("DB_USERNAME"),
-            password = os.getenv("DB_PASSWORD")
-        )
-
-    except:
-        print("USERMSG: could not connect to database")
-        conn = None
-    
-    if conn != None:
-        cur = conn.cursor()
-
-        cur.execute("SELECT * FROM users WHERE username=%s;", [form_username])
-        result = cur.fetchone()
-        
-        # if username exists
-        if result != None:
-            print("RESULT:")
-            print(result)
-            password_hash = result[2] # Get the saved PW from the DB
-            #user exists then check if password matches
-            if bcrypt.check_password_hash(password_hash, form_password):
-                user_status="LOGGED"
-                print("USER MATCHED AND LOGGED IN!")
-                redirect_url = "http://localhost:5173/?status=" + str(user_status) + "&username=" + str(form_username) + "&id=" + str(result[0])
-                return redirect(redirect_url)
-
-
-        
-        #if username doesnt exist
-        else:
-
-            form_password_hash = bcrypt.generate_password_hash(form_password).decode('utf-8')
-            print("FORM PASSWORD HASH:")
-            print(form_password_hash)
-            cur.execute("INSERT INTO users(username, password) VALUES(%s, %s);", [form_username, form_password_hash])
-            print("ADDED USERNAME: " + form_username)
-            cur.execute("SELECT * FROM users WHERE username=%s;", [form_username])
-            result = cur.fetchone()
-            print("CHECKING USERNAME EXISTS:")
-            print(result[1])
-            if result[1]==form_username:    
-                user_status="CREATED"
-                redirect_url = "http://localhost:5173/?status=" + str(user_status) + "&username=" + str(form_username) + "&id=" + str(result[0])
-                return redirect(redirect_url)
-
-
-    conn.commit()
-    conn.close()
-
-    # this is a time thing - this is a security risk but running out of time :)
-    return redirect("http://localhost:5173/")
-
-
-
-
-
 
 # ========================= END ROUTES START FUNCTIONS==============================
 
 def generate_prompt(aiPrompt):
-    return """Suggest 5 indie game ideas for a game jam, each idea should be 1 paragraph long. The Game should be {}""".format(aiPrompt)
-
-
-
-
+    return """
+        Suggest 4 ideas for an indie game jam, with each idea made up of 3 paragraphs consisting of the following rules: 
+        • Come up with a descriptive and catchy title that suits the theme. this title is not counted towards the 3 paragraphs of explanation text. 
+        • Each title should have <h3> before the title text and </h3> after the title text. 
+        • Ensure there are 4 separate ideas. 
+        • Do not prefix ideas with a number. 
+        • Each paragraph should be wrapped in <p> and </p> around the paragraph. 
+        • Separate each idea with a line of six equal signs, like this: ======
+        • The addition of the stars row does not count towards the 3 paragraphs. 
+        • First paragraph consists of an overview of the general game idea, which should include the following criteria: {}
+        • Second paragraph explains the basics of the game mechanics and core gameplay loop, for example how the game is played by the player. 
+        Third paragraph delves into more detail around the art style and theme of the game, including any specific character models and how they are represented on screen.
+        • Do not put any text after the ideas, just give the ideas themselves.
+        """.format(aiPrompt)

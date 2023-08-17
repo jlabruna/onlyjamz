@@ -66,56 +66,61 @@ if conn != None:
     cur.execute(
         "CREATE TABLE projects (id serial PRIMARY KEY,"
         "userid int NOT NULL,"
-        "title varchar (150) NOT NULL,"
-        "summary text NOT NULL,"
-        "detailed text NOT NULL);"    
+        "title varchar (150),"
+        "summary text,"
+        "detailed text,"
+        "notes text);"    
         )
     print("ADDING PROJECTS")
 
     cur.execute(
-       "INSERT INTO projects (userid, title, summary, detailed)"
-       "VALUES (%s, %s, %s, %s)",
+       "INSERT INTO projects (userid, title, summary, detailed, notes)"
+       "VALUES (%s, %s, %s, %s, %s)",
        (
            "1",
            "Lost in Space",
            "The player is a space explorer sent to a distant planet to investigate a mysterious signal. After a crash-landing, they must fight their way through hordes of alien creatures to discover the source of the signal and find a way home.",
            "detailed1",
+           "notes1",
        )
     )
 
     cur.execute(
-       "INSERT INTO projects (userid, title, summary, detailed)"
-       "VALUES (%s, %s, %s, %s)",
+       "INSERT INTO projects (userid, title, summary, detailed, notes)"
+       "VALUES (%s, %s, %s, %s, %s)",
        (
         
             "1",
             "Dark Horizon",
             "The player is a space pilot, stranded on a dark and abandoned space station. Armed with only a laser pistol, they must explore the station and battle their way through robotic enemies to find a way to escape",
             "detailed2",
+            "notes2"
 
        )
     )
 
     cur.execute(
-       "INSERT INTO projects (userid, title, summary, detailed)"
-       "VALUES (%s, %s, %s, %s)",
+       "INSERT INTO projects (userid, title, summary, detailed, notes)"
+       "VALUES (%s, %s, %s, %s, %s)",
        (
 
             "1",
             "Star Wars",
             "The player is a rebel fighter pilot on a mission to destroy a powerful Imperial superweapon. Along the way they must battle waves of enemy fighters, evade or destroy powerful turrets and outwit Imperial forces to complete their mission",
             "detailed3",
+            "notes3",
        )
     )
 
     cur.execute(
-       "INSERT INTO projects (userid, title, summary, detailed)"
-       "VALUES (%s, %s, %s, %s)",
+       "INSERT INTO projects (userid, title, summary, detailed, notes)"
+       "VALUES (%s, %s, %s, %s, %s)",
        (
             "1",
             "Alien Invasion",
             "The player is a soldier defending their home planet from an alien invasion. With limited resources, they must fight their way through hordes of alien creatures and uncover the source of the invasion before it's too late.",
             "detailed4",
+            "notes4",
 
        )
     )
