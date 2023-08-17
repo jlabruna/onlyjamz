@@ -28,32 +28,49 @@ function App() {
   const [formJam, setFormJam] = useState(false);
   const [urlId, setUrlId] = useState('');
   const [urlName, setUrlName] = useState('');
-  // const [cookieSet, setCookieSet] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false);
 
-  // const [savedIdea, setSavedIdea] = useState('')
-  // const [savedIndex, setSavedIndex] = useState('')
-
-  // if user status is logged in or created as per url 
+ // if user status is logged in or created as per url 
   if (userStatus=="CREATED" || userStatus=="LOGGED") {
-    let cookieContents = userName + "=" + userId + "; expires=Thu, 16 Aug 2024 12:00:00 UTC; path=/";
-    document.cookie = cookieContents
+    let cookieName = "userName=" + userName + ";";
+    let cookieId = "userId=" + userId + ";";
+
+
+    document.cookie = cookieName;
+    document.cookie = cookieId;
     setUrlId(userId);
     setUrlName(userName);
-    window.location.replace('http://localhost:5173/');
-  }
-
-  function checkCookie(name) {
-    return document.cookie.includes(name + '=');
-  }
-  
-  if (checkCookie("droptopcaddie")) {
-    console.log('myCookie exists.');
-    // setCookieSet(true);
+    // window.location.replace('http://localhost:5173/');
   } else {
-    console.log('myCookie does not exist.');
+    
+    let varId = Cookies.get("userId")
+    let varName = Cookies.get("userName")
+    setUrlId(varId);
+    setUrlName(varName);
+    console.log("User is Revisiting... " + urlId + " " + urlName)
   }
 
-  checkCookie()
+
+  // const readCookie = (urlName, urlId) => {
+  //   console.log(userName)
+  //   if (authenticated == false && userName== Cookies.get(userName)){
+  //     setAuthenticated(true);
+  //     console.log(urlName + "Logged in")
+  //   } else {
+  //       console.log("not logged in");
+  //   }
+  // }
+  // useEffect(() => {
+  //     readCookie(urlName, urlId)
+  // },[]);
+
+  
+
+
+
+
+  
+  // checkCookie()
   // console.log(cookieSet)
   // check for the cookie - if they are logged in, set a variable.
   // if the variable is set show logout, dont show the login.
