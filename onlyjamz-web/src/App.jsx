@@ -9,12 +9,7 @@ import './App.css';
 
 
 function App() {
-  const queryParameters = new URLSearchParams(window.location.search)
-  const userStatus = queryParameters.get("status")
-  const userName = queryParameters.get("username")
-  const userId = queryParameters.get("id")
-
-  const [getData, setGetData] = useState('');
+  const [projects, setProjects] = useState('');
   const [response, setResponse] = useState('');
   const [imageSrc, setImageSrc] = useState('/empty.png');
   const [buttonText, setButtonText] = useState('Generate Ideas!');
@@ -25,7 +20,8 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
-  const [showResults, setShowResults] = useState(true);
+  const [showIdeas, setShowIdeas] = useState(true);
+  const [showProjects, setShowProjects] = useState(true);
 
  
 
@@ -57,7 +53,7 @@ const handleInputChange = (event) => {
       setButtonText('Filling Jar...')
       setResponse('');
       setImageSrc('/empty.png');
-      setShowResults(true);
+      setShowIdeas(true);
       const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
       await console.log(aiPrompt);
       const apiUrl = 'http://localhost:5000/api/chatgpt';
@@ -84,14 +80,13 @@ const handleInputChange = (event) => {
   // Below is when you save an idea
   const handleSave = async (e, idea, index) => {
     e.preventDefault();
-
+    setShowIdeas(false);
     try {
       // setSavedIdea(idea);
       // setSavedIndex(index);
       console.log(idea)
       console.log(index)
 
-      setShowResults(false);
       const apiUrl = 'http://localhost:5000/api/saveIdea';
       const response = fetch(apiUrl, {
         method: 'POST',
@@ -109,32 +104,48 @@ const handleInputChange = (event) => {
     }
   };
 
+  async function doGetProjects() {
+  setProjects('');      
+        const res = await fetch("http://localhost:5000/api/projects");
+        const projectsData = await res.json();
+        setProjects(projectsData);
+        console.log(projects)
+ }
 
-  // Login / Signup submit here 
-  const submitLogin = async (e) => {
+// why does it still show the old version for a bit until i do it a second time?
+  const getProjects = async (e) => {
     e.preventDefault();
-
     try {
-      setButtonText('Filling Jar...')
-      setResponse('');
-      setImageSrc('/empty.png');
-      
-      const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
-      await console.log(aiPrompt);
-      const apiUrl = 'http://localhost:5000/api/chatgpt';
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ 
-          aiPrompt
-         }),
-      });
+     doGetProjects()
     } catch (error) {
       console.error('Error:', error);
     }
   };
+
+ // Below is when you save an idea
+ const deleteProject = async (e, projectId) => {
+  e.preventDefault();
+ 
+  try {
+    console.log("DELETING PROJECT" + projectId)
+    const apiUrl = 'http://localhost:5000/api/deleteProject';
+    const delProj = fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ 
+        projectId
+       }),
+    }).then (doGetProjects()) ;
+    console.log("deleted in capitals or something we can look for")
+    console.log(delProj)
+
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
 
 
  
@@ -193,22 +204,33 @@ const handleInputChange = (event) => {
               name="jam"
               onChange={handleInputChange}
             />
-        <div className='py-4'><button className='btn btn-success' type="submit">{!response ? buttonText : 'Generate Ideas!'}</button></div>
+        <div className='py-4'>
+          <button className='btn btn-success' type="submit">{!response ? buttonText : 'Generate Ideas!'}</button>
+          <button className='btn btn-success' type="submit" onClick={getProjects}>Show Projects</button>
+        </div>
       </form>
 
         {response && (
-          // <div className="response results" id="results">
-          <div className={showResults ? "response results" : "hidden"}>
+          <div className={showIdeas ? "response results" : "hidden"}>
             {response.map((idea, index) => (
-              <div className={showResults ? "card eachCard" : "hidden"}>
-                <p className={showResults ? "card-text" : "hidden"} >{idea}</p>
-                <button className={showResults ? 'btn btn-info card-button' : "hidden"} onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
+              <div className= "card ideasCard">
+                <p className="card-text" >{idea}</p>
+                <button className='btn btn-info card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
               </div>
             ))}
           </div>
         )}
-      <div>yo</div>
-
+      {projects && (
+      <div className={showProjects ? "response results" : "hidden"}>
+        {projects.map((oneProject) => (
+          <div className= "card projectsCard">
+            <p className="card-title" >{oneProject[2]}</p>
+            <p className="card-text" >{oneProject[3]}</p>
+            <button className='btn btn-info card-button' onClick={(e) => deleteProject(e, oneProject[0])}>Delete Project</button>
+          </div>
+        ))}
+      </div>
+      )}
 
     </div>
   );

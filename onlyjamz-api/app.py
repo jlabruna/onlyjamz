@@ -66,7 +66,6 @@ def chatgpt():
         # return jsonify(aiResponse)
     return "This is an API you shouldn't see this. go to this URL instead."
 
-
 @app.route("/api/saveIdea", methods=["POST"])
 def saveidea():
     try:
@@ -118,6 +117,38 @@ def saveidea():
  
     return "Idea saved to the database"
 
+
+
+@app.route("/api/deleteProject", methods=["POST"])
+@cross_origin()
+def deleteProject():
+    try:
+        conn = psycopg2.connect(
+            host = os.getenv("DB_HOST"),
+            database = "onlyjamz",
+            user = os.getenv("DB_USERNAME"),
+            password = os.getenv("DB_PASSWORD")
+        )
+
+    except:
+        print("USERMSG: could not connect to database")
+        conn = None
+
+    submittedRequest = request.get_json()
+    print(submittedRequest)
+    projectDeleteId = submittedRequest["projectId"]
+    
+    if conn != None:
+        cur = conn.cursor()
+        cur.execute("DELETE FROM projects WHERE id=%s;", [projectDeleteId])
+        # had to turn dict value into a list by using square brackets ie made it indexable
+ 
+    # committing all database changes and closing connections
+    conn.commit()
+    print("CLOSING DATABASE!")
+    conn.close()
+ 
+    return jsonify("Idea DELETED from database")
 
 
 

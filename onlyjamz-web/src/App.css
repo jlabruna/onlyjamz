@@ -23,21 +23,28 @@
 }
 
 .hidden {
-  visibility: hidden;
+  display: none;
 }
 
 .jam {
   color: rgb(185, 34, 54);
 }
 
-.eachCard {
+.ideasCard {
+  background-color: rgb(80, 18, 49);
+}
+
+.projectsCard {
+  background-color: rgb(19, 113, 126);
+}
+
+.card {
   display: inline;
   width: auto;
   max-width: 40%;
   min-width: 300px;
-  /* background-color: rgb(185, 34, 54); */
-  background-color: rgb(80, 18, 49);
 }
+
 
 .card-button {
 
