@@ -26,16 +26,23 @@
   display: none;
 }
 
+.blueberry {
+  color: rgb(24, 59, 156);
+}
+
+
 .jam {
   color: rgb(185, 34, 54);
 }
+
+
 
 .ideasCard {
   background-color: rgb(80, 18, 49);
 }
 
 .projectsCard {
-  background-color: rgb(19, 113, 126);
+  background-color: rgb(24, 59, 156);
 }
 
 .card {

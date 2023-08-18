@@ -22,10 +22,9 @@ function App() {
   const [formJam, setFormJam] = useState(false);
   const [showIdeas, setShowIdeas] = useState(true);
   const [showProjects, setShowProjects] = useState(true);
-
+  const [projectsButtonText, setProjectsButtonText] = useState('Show Projects');
  
-
-//below handleSelectChange is controlling the change in form
+  //below handleSelectChange is controlling the change in form
 const handleInputChange = (event) => {
   const { name, value } = event.target;
   if (name === 'genre') {
@@ -54,7 +53,8 @@ const handleInputChange = (event) => {
       setResponse('');
       setImageSrc('/empty.png');
       setShowIdeas(true);
-      const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Also, it is very important that the prompt features lots of ${formJam}. Ensure Jam is mentioned several times.` : ''}`;
+      setShowProjects(false);
+      const aiPrompt = await `a ${ formGenre } game, with a ${ formView } viewpoint, ${ formPlayers } player, in a ${ formArt} art style, with a ${ formTheme } theme. ${formJam ? ` Very important that the ideas feature lots of Jam. Ensure sweet, sticky Jam is mentioned several times.` : ''}`;
       await console.log(aiPrompt);
       const apiUrl = 'https://onlyjamz.onrender.com/api/chatgpt';
       const response = await fetch(apiUrl, {
@@ -105,7 +105,8 @@ const handleInputChange = (event) => {
   };
 
   async function doGetProjects() {
-  setProjects('');      
+  setProjects('');
+        setProjectsButtonText('Filling Jar...')      
         const res = await fetch("https://onlyjamz.onrender.com/api/projects");
         const projectsData = await res.json();
         setProjects(projectsData);
@@ -116,6 +117,8 @@ const handleInputChange = (event) => {
   const getProjects = async (e) => {
     e.preventDefault();
     try {
+      setShowProjects(true);
+      setShowIdeas(false);
      doGetProjects()
     } catch (error) {
       console.error('Error:', error);
@@ -148,11 +151,10 @@ const handleInputChange = (event) => {
 
 
 
- 
   return (
     <div className="App">
       <img src={imageSrc} height="100px"></img>
-      <h1>Only<span className='jam'>Jamz</span></h1>
+      <h1>Only<span className={!showIdeas ? "blueberry" : "jam"}>Jamz</span></h1>
       <h3><em>The discerning nerd's GameJam prompt generator</em></h3>
       <form className="py-5" onSubmit={handleSubmit}>
         <label for="genre" className="px-1"> Select a Genre: </label>
@@ -162,6 +164,9 @@ const handleInputChange = (event) => {
           <option value="rts">RTS</option>
           <option value="shooter">Shooter</option>
           <option value="platformer">Platformer</option>
+          <option value="puzzle">Puzzle</option>
+          <option value="survival">Survival</option>
+          <option value="stealth">Stealth</option>
         </select>
         <label for="view" className="px-1"> Select a Viewpoint: </label>
         <select name="view" id="view" onChange={handleInputChange}>
@@ -196,6 +201,7 @@ const handleInputChange = (event) => {
           <option value="Lovecraftian">Lovecraftian</option>
           <option value="modern">Modern</option>
           <option value="pirate">Pirate</option>
+          <option value="superhero">Superhero</option>
         </select>
         <label for="jam" className='py-3 px-2'> Include Actual Jam??</label>
             <input
@@ -205,8 +211,8 @@ const handleInputChange = (event) => {
               onChange={handleInputChange}
             />
         <div className='py-4'>
-          <button className='btn btn-success' type="submit">{!response ? buttonText : 'Generate Ideas!'}</button>
-          <button className='btn btn-success' type="submit" onClick={getProjects}>Show Projects</button>
+          <button className='btn btn-success mx-2' type="submit">{!response ? buttonText : 'Generate Ideas!'}</button>
+          <button className='btn btn-info mx-2' type="submit" onClick={getProjects}>{!projects ? projectsButtonText : 'Show Projects'}</button>
         </div>
       </form>
 
@@ -215,7 +221,7 @@ const handleInputChange = (event) => {
             {response.map((idea, index) => (
               <div className= "card ideasCard">
                 <p className="card-text" >{idea}</p>
-                <button className='btn btn-info card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
+                <button className='btn btn-success card-button' onClick={(e) => handleSave(e, idea, index)}>Save Idea</button>
               </div>
             ))}
           </div>
@@ -226,7 +232,7 @@ const handleInputChange = (event) => {
           <div className= "card projectsCard">
             <p className="card-title" >{oneProject[2]}</p>
             <p className="card-text" >{oneProject[3]}</p>
-            <button className='btn btn-info card-button' onClick={(e) => deleteProject(e, oneProject[0])}>Delete Project</button>
+            <button className='btn btn-info card-button' onClick={(e) => deleteProject(e, oneProject[0])}>Delete</button>
           </div>
         ))}
       </div>
