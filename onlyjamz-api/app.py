@@ -214,7 +214,7 @@ def generate_prompt(aiPrompt):
         • Each title should have <h3> before the title text and </h3> after the title text. 
         • Ensure there are 4 separate ideas. 
         • Do not prefix ideas with a number. 
-        • Each paragraph should be on a new line. 
+        • Each paragraph should be wrapped in <p> and </p> around the paragraph. 
         • Separate each idea with a line of six equal signs, like this: ======
         • The addition of the stars row does not count towards the 3 paragraphs.
         • First paragraph consists of an overview of the general game idea, which should include the following criteria: {}
