@@ -6,7 +6,7 @@ Simply select the criteria for the game prompts you would like to generate, incl
 
 To see a list of saved ideas, click the **Show Projects** button. From here, you can delete any saved ideas you no longer require.
 
-To access OnlyJamz, [Click Here](https://www-onlyjamz.onrender.com/)
+To access OnlyJamz, [Click Here](https://webjamz.onrender.com/)
 
 ![OnlyJamz Home Screen](/onlyjamz.png)
 
@@ -44,15 +44,11 @@ For some unknown reason, as soon as this project's back end was hosted on Render
 
 I have tried several ways to format the ideas in the cards, but unfortunately I was not successful. I would remove the tags themselves from coming in from the prompt, but I ran out of time to rebuild the parts of my python script that rely on the tags (such as the h3 tags being stripped to identify the title for saving the idea)
 
-3. **Front end Render hosting**
-
-For some reason, my front end deployment in Render is unsuccessful on the last day, so I am relying on running this over localhost (backend is fine, if slow). I will try to rectify this but I am running out of time
-
-4. **Auth**
+3. **Auth**
 
 I originally planned to have a users database, with ideas saved to specific users when logged in. However, after a whole day of tinkering, I could not get this to work. The auth was fine, but I was unable to work out how to get React to identify a set cookie. I ended up scrapping the feature in subsequent commits, as it was not part of the requirements and I was running out of time.
 
-5. **styling / bootstrap**
+4. **styling / bootstrap**
 
 I was unaware that React had its own bootstrap, and that it was imported via components. It also effectively replaces standard HTML with its own code (eg rather than specifying a class for your card, you effectively change the div to <card>). I ended up encountering issues using bootstrap with react, so opted to use a combination of CDN bootstrap and my own CSS.
 
@@ -76,3 +72,7 @@ Features that would have been added include -
 5. **Two layers of prompt generation.** The original idea generation was meant to be a summary. When the idea was saved, there would be another prompt sent to ChatGPT to give a more detailed idea, which would also be saved in the database, along with an image (see below)
 
 6. **Image Generation.** The original idea was to have a prompt submitted to ChatGPT AND to an image generation tool, such as Midjourney or SD. The Image generation would only occur on the second submission, once the idea is saved. However, since Auth was abandoned, I did not want to implement this feature until I had an MVP working.
+
+## Testing
+
+Tests were done in Python, in file test.py. There are 6 tests, all successful.
