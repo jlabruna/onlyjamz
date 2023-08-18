@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+# connecting with psycopg2
 try:
     conn = psycopg2.connect(
         host = os.getenv("DB_HOST"),
@@ -27,17 +28,18 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 
 
+# returning hello world to see if back end is running
 @app.route('/')
 def helloworld():
     return 'Flask App is Running...'
 
 @app.route('/api/getideas')
-# any route that we do accessed from another server (pulled from another website, ie api routes) needs the below line in the route
+# I was getting massive CORS issues and this cross_origin thing helped. I am afraid to add it to working code this late, though.
 @cross_origin()
 def getIdeas():
     return 'GameJamz ideas'
 
-
+# Route that goes to chatgpt. if your prompt is bigger knock tokens down.
 @app.route("/api/chatgpt", methods=("GET", "POST"))
 def chatgpt():
     if request.method == "POST":
@@ -60,12 +62,10 @@ def chatgpt():
 
         return jsonify(items_list)
 
+    # just a message if they go to the actual url for some reason
+    return "This is an API you shouldn't see this. go to https://webjamz.onrender.com/ instead."
 
-        # aiResponse = response.choices[0].text
-        # print(aiResponse)
-        # return jsonify(aiResponse)
-    return "This is an API you shouldn't see this. go to this URL instead."
-
+# saving idea route
 @app.route("/api/saveIdea", methods=["POST"])
 def saveidea():
     try:
@@ -90,14 +90,14 @@ def saveidea():
     h3_text = idea_text[start_index:end_index]
     print(h3_text)
 
-    # Removing <h3> text and any remaining HTML tags
+    # Removing <h3> text and any remaining HTML tags. didnt work very well but too scared to fix at this point since it works.
     rest_of_content = idea_text.replace(h3_text, '')  # Removing the <h3> text
 
     print(rest_of_content)
 
 
 
-
+# adding project to db
     if conn != None:
         cur = conn.cursor()
         cur.execute(
@@ -118,7 +118,7 @@ def saveidea():
     return "Idea saved to the database"
 
 
-
+# delete from db route and sql commands
 @app.route("/api/deleteProject", methods=["POST"])
 @cross_origin()
 def deleteProject():
@@ -151,7 +151,7 @@ def deleteProject():
     return jsonify("Idea DELETED from database")
 
 
-
+# get all dem projects
 @app.route("/api/projects", methods=["GET"])
 def listProjects():
     try:

@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 import './App.css';
 
-// if user status is logged in or created set a cookie (with session thingy) and create a react variable (maybe array) that says the user is logged in (global) 
-// and redirect to home page with no variables in string
-// if the cookie is set (ie the variable above is not null), dont show the login form, instead shows a logout button (which goes to flask)
-// if it doesnt exist show the whole login form
+
 
 
 function App() {
+  // projects and response control the saved projects and ideas cards 
   const [projects, setProjects] = useState('');
   const [response, setResponse] = useState('');
+  //imgsrc controls the jar filling up
   const [imageSrc, setImageSrc] = useState('/empty.png');
+  //buttontext adds text to the button when generating
   const [buttonText, setButtonText] = useState('Generate Ideas!');
+  const [projectsButtonText, setProjectsButtonText] = useState('Show Projects');
   //below is adding all form text to their own states to amalgamate
   const [formGenre, setFormGenre] = useState('');
   const [formView, setFormView] = useState('');
@@ -20,9 +21,10 @@ function App() {
   const [formPlayers, setFormPlayers] = useState('');
   const [formTheme, setFormTheme] = useState('');
   const [formJam, setFormJam] = useState(false);
+  // hides and shows the div for projects and ideas
   const [showIdeas, setShowIdeas] = useState(true);
   const [showProjects, setShowProjects] = useState(true);
-  const [projectsButtonText, setProjectsButtonText] = useState('Show Projects');
+  
  
   //below handleSelectChange is controlling the change in form
 const handleInputChange = (event) => {
@@ -82,8 +84,6 @@ const handleInputChange = (event) => {
     e.preventDefault();
     setShowIdeas(false);
     try {
-      // setSavedIdea(idea);
-      // setSavedIndex(index);
       console.log(idea)
       console.log(index)
 
@@ -104,6 +104,19 @@ const handleInputChange = (event) => {
     }
   };
 
+// press show projects runs this
+const getProjects = async (e) => {
+  e.preventDefault();
+  try {
+    setShowProjects(true);
+    setShowIdeas(false);
+   doGetProjects()
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+  // i am sure i could have combined this with the one above, but when i tried it broke, so leaving it for now
   async function doGetProjects() {
   setProjects('');
         setProjectsButtonText('Filling Jar...')      
@@ -113,19 +126,9 @@ const handleInputChange = (event) => {
         console.log(projects)
  }
 
-// why does it still show the old version for a bit until i do it a second time?
-  const getProjects = async (e) => {
-    e.preventDefault();
-    try {
-      setShowProjects(true);
-      setShowIdeas(false);
-     doGetProjects()
-    } catch (error) {
-      console.error('Error:', error);
-    }
-  };
 
- // Below is when you save an idea
+
+ // Below is when you delete a saved project
  const deleteProject = async (e, projectId) => {
   e.preventDefault();
  
@@ -141,7 +144,7 @@ const handleInputChange = (event) => {
         projectId
        }),
     }).then (doGetProjects()) ;
-    console.log("deleted in capitals or something we can look for")
+    console.log("console log to test delproj")
     console.log(delProj)
 
   } catch (error) {
